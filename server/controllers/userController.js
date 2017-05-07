@@ -43,6 +43,7 @@ methods.insertUser = function(req, res){
   })
 }
 
+
 //INSERT FB
 methods.fbLogin = function(req, res){
   console.log(req.body.member_id);
