@@ -48,23 +48,34 @@ methods.insertUser = function(req, res){
 //INSERT FB
 methods.fbLogin = function(req, res){
   console.log(req.body.member_id);
+
   //PERTAMA LOGIN, ID LANGSUNG DIBUAT
-  // User.findOne({member_id:req.body.member_id},function(err, result) {
-  //   if(result == null){
-  //     var userInput = new User({
-  //       member_id:req.body.member_id
-  //     })
-  //     userInput.save(function(err,userInput){
-  //       if(err){
-  //         return console.log(err);
-  //       } else {
-  //         res.send(userInput)
-  //       }
-  //     })
-  //   } else {
-  //     console.log('belum');
-  //   }
-  // })
+  User.findOne({member_id:req.body.member_id},function(err, result) {
+    if(result == null){
+      var userInput = new User({
+        member_id:req.body.member_id
+      })
+      userInput.save(function(err,userInput){
+        if(err){
+          return console.log(err);
+        } else {
+          res.send(userInput)
+        }
+      })
+    }
+
+    //KALAU SUDAH PERNAH LOGIN FB
+    else {
+      var getUser = User.findOne({member_id : req.body.member_id})
+      getUser.exec(function(err, user){
+          let fb = {
+            member_id:user.member_id
+          }
+          let token = jwt.sign(fb, 'secret')
+           res.send(token)
+      })
+    }
+  })
 }
 
 //INSERT FB SUKSES
@@ -102,7 +113,7 @@ methods.signIn = function (username, password, next) {
         first_name:user.first_name,
         last_name:user.last_name
       }
-      let token = jwt.sign(user, 'secret')
+      let token = jwt.sign(User, 'secret')
        next(null, {message: 'Berhasil Login', token })
     } else {
       next(null, {message: 'Password Salah'})

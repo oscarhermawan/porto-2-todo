@@ -18,8 +18,9 @@
 
           axios.post('http://localhost:3000/users/fblogin',{member_id:response.authResponse.userID })
           .then((result)=>{
-            if(result.data.token == null){
-              console.log(result.data.message);
+            console.log(result);
+            if(result == null){
+              console.log(result);
             }
             else {
               localStorage.setItem('token', result.data.token)
