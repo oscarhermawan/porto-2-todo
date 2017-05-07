@@ -1,162 +1,141 @@
 <!DOCTYPE html>
 <html>
   <head>
-
     <meta charset="utf-8">
-    <title></title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title>Login Page</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.1/axios.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+      // This is called with the results from from FB.getLoginStatus().
+      function statusChangeCallback(response) {
+        console.log('statusChangeCallback');
+        console.log(response); // DAPAT USER ID SM TOKEN DARI FB
+
+        if (response.status === 'connected') {
+          // Logged into your app and Facebook.
+
+          axios.post('http://localhost:3000/users/fblogin',{member_id:response.authResponse.userID })
+          .then((result)=>{
+            if(result.data.token == null){
+              console.log(result.data.message);
+            }
+            else {
+              localStorage.setItem('token', result.data.token)
+              window.location.replace("todo.html")
+            }
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
+          testAPI();
+        } else {
+          // The person is not logged into your app or we are unable to tell.
+          document.getElementById('status').innerHTML = 'Please log ' +
+            'into this app.';
+        }
+      }
+
+      // This function is called when someone finishes with the Login
+      // Button.  See the onlogin handler attached to it in the sample
+      // code below.
+      function checkLoginState() {
+        FB.getLoginStatus(function(response) {
+          statusChangeCallback(response);
+        });
+      }
+
+      window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '122852798272058',
+        cookie     : true,  // enable cookies to allow the server to access
+                            // the session
+        xfbml      : true,  // parse social plugins on this page
+        version    : 'v2.9' // use graph api version 2.8
+      });
+
+      // Now that we've initialized the JavaScript SDK, we call
+      // FB.getLoginStatus().  This function gets the state of the
+      // person visiting this page and can return one of three states to
+      // the callback you provide.  They can be:
+      //
+      // 1. Logged into your app ('connected')
+      // 2. Logged into Facebook, but not your app ('not_authorized')
+      // 3. Not logged into Facebook and can't tell if they are logged into
+      //    your app or not.
+      //
+      // These three cases are handled in the callback function.
+
+      FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+      });
+
+      };
+
+      // Load the SDK asynchronously
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+
+      // Here we run a very simple test of the Graph API after login is
+      // successful.  See statusChangeCallback() for when this call is made.
+      function testAPI() {
+        console.log('Welcome!  Fetching your information.... ');
+        FB.api('/me', function(response) {
+          console.log('Successful login for: ' + response.name);
+          document.getElementById('status').innerHTML =
+            'Thanks for logging in, ' + response.name + '!';
+
+        });
+      }
+    </script>
+
   </head>
   <body>
     <div id="app">
 
       <div class="row">
-        <div class="col-md-1">
+        <div class="col-md-4">
         </div>
-        <div class="col-md-10">
-          <table class="table table-bordered">
-            <thead>
-    					<tr class="active">
-    						<th>
-    							No
-    						</th>
-    						<th>
-    							Todo List
-    						</th>
-    						<th>
-    							Status Completed
-    						</th>
-    						<th>
-    							Created At
-    						</th>
-                <th>
-    							Updated At
-    						</th>
-                <th>
-    							Action
-    						</th>
-    					</tr>
-    				</thead>
-            <tbody>
-              <tr v-for="list in lists_todo" class="success">
-                <td>
-                  1
-                </td>
-                <td>
-                  {{list.memo}}
-                </td>
-                <td>
-                  {{list.is_complete}}
-                </td>
-                <td>
-                  {{list.createdAt}}
-                </td>
-                <td>
-                  {{list.updatedAt}}
-                </td>
-                <td>
-                  <!-- Trigger the modal with a button -->
-                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".editModal">Edit Memo</button>
-                  <button type="button" class="btn btn-danger btn-default" v-on:click="deleteMemo(list)">Delete Memo</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
 
-          <!-- Trigger the modal with a button -->
-          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Add Memo</button>
+        <div class="col-md-4">
+              <form role="form">
+        				<div class="form-group">
+        					<label for="exampleInputEmail1">
+        						Username
+        					</label>
+        					<input v-model="username" class="form-control" />
+        				</div>
 
-          <!-- Modal -->
-          <div id="myModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
+        				<div class="form-group">
+        					<label for="exampleInputPassword1">
+        						Password
+        					</label>
+        					<input v-model="password" type="password" class="form-control" id="exampleInputPassword1" />
+        				</div>
 
-              <!-- Modal content-->
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title">Input New Memo</h4>
-                </div>
 
-                <div class="modal-body">
-                  <table class="table">
-                    <tbody>
-                      <tr>
-            						<th>
-            							Memo
-            						</th>
-            						<th>
-            							<input type="text" v-model="memo" class="form-control" id="usr">
-            						</th>
-            					</tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-success" data-dismiss="modal" v-on:click="addMemo">Add</button>
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
+        				<button type="submit" class="btn btn-success" v-on:click="loginLocal">
+        					Login
+        				</button>
+                <button type="submit" class="btn btn-primary">
+                  <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+                  </fb:login-button>
+        				</button>
+                <hr>
+                Don't have an account! Sign Up <a href="/signup.html">Here<a>
+        			</form>
         </div>
-        <div class="col-md-1">
+
+        <div class="col-md-4">
         </div>
       </div>
 
-
-
-
-
-    </div>
-
-    <!-- Modal edit-->
-    <div  class="modal editModal fade" role="dialog">
-      <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Input New Memo</h4>
-          </div>
-
-          <div class="modal-body">
-            <table class="table">
-              <tbody>
-                <tr>
-                  <td>
-                    Memo
-                  </td>
-                  <td>
-                    <input type="text" class="form-control">
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Memo
-                  </td>
-                  <td>
-                    <input type="text" class="form-control">
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal" v-on:click="addMemo">Add</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          </div>
-        </div>
-
-      </div>
     </div>
   </body>
 
@@ -164,45 +143,34 @@
     var app = new Vue({
       el : '#app',
       data:{
-        delete:'',
-        member_id:'590dac191ccd8304d70c90ac',
-        lists_todo:[],
-        memo:''
+        username:'',
+        password:''
       },
       created:function(){
-        this.getData()
+        if(localStorage.getItem('token') != null){
+          window.location.href = 'todo.html'
+        }
       },
       methods:{
-        getData:function(){
-          axios.get('http://localhost:3000/todos')
-          .then((todos)=>{
-            // console.log(todos.data);
-            app.lists_todo = todos.data
+        loginLocal:function(){
+          axios.post('http://localhost:3000/users/signin',{username:this.username,password:this.password })
+          .then((result)=>{
+            if(result.data.token == null){
+              console.log(result.data.message);
+            }
+            else {
+              localStorage.setItem('token', result.data.token)
+              window.location.replace("todo.html")
+            }
           })
           .catch((err)=>{
             console.log(err);
           })
-        },
-        addMemo:function(){
-          axios.post('http://localhost:3000/todos/',{member_id:this.member_id,memo:this.memo })
-          .then((todos)=>{
-            app.getData();
-          })
-          .catch((err)=>{
-            console.log(err);
-          })
-        },
-        deleteMemo:function(list){
-          console.log(list._id);
-          axios.delete(`http://localhost:3000/todos/${list._id}`)
-          .then((todos)=>{
-            app.getData();
-          })
-          .catch((err)=>{
-            console.log(err);
-          })
-        },
+        }
       }
     })
   </script>
+
+
+
 </html>

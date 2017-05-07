@@ -1,9 +1,11 @@
 var ObjectId = require('mongodb').ObjectId
 var Todo = require('../models/todo')
+var jwt = require('jsonwebtoken')
 const methods = {}
 
+
 methods.getAllTodos = function(req, res) {
-  Todo.find(function(err, Todo) {
+  Todo.find({member_id:req.headers.member_id},function(err, Todo) {
     if(err){
       console.log(err);
     } else {

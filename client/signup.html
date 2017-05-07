@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SIGN UP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.1/axios.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <div id="app">
+      <div class="row">
+        <div class="col-md-4">
+        </div>
+
+        <div class="col-md-4">
+              <form role="form">
+        				<div class="form-group">
+        					<label for="exampleInputEmail1">
+        						Username
+        					</label>
+        					<input v-model="username" class="form-control" />
+        				</div>
+
+        				<div class="form-group">
+        					<label for="exampleInputPassword1">
+        						Password
+        					</label>
+        					<input v-model="password" type="password" class="form-control" id="exampleInputPassword1" />
+        				</div>
+
+                <div class="form-group">
+        					<label for="exampleInputEmail1">
+        						First Name
+        					</label>
+        					<input v-model="first_name" type="email" class="form-control" />
+        				</div>
+
+                <div class="form-group">
+        					<label for="exampleInputEmail1">
+        						Last Name
+        					</label>
+        					<input v-model="last_name" type="email" class="form-control" />
+        				</div>
+
+        				<button type="submit" class="btn btn-success" v-on:click="register">
+        					Register
+        				</button>
+                <hr>
+        			</form>
+        </div>
+
+        <div class="col-md-4">
+        </div>
+      </div>
+    </div>
+  </body>
+
+
+  <script>
+    var app = new Vue({
+      el : '#app',
+      data:{
+        username:'',
+        password:'',
+        first_name:'',
+        last_name:''
+      },
+      methods:{
+        register:function(){
+          axios.post('http://localhost:3000/users',{username:this.username,password:this.password, first_name:this.first_name, last_name:this.last_name})
+          .then((result)=>{
+            window.location.replace("index.html")
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
+        }
+      }
+    })
+  </script>
+
+</html>
