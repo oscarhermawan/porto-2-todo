@@ -6,9 +6,9 @@ const methods = {}
 
 methods.getId = function(req, res){
   jwt.verify(req.headers.token, 'secret', function(err, decoded){
+    console.log(decoded);
     if(!err){
-      // console.log(decoded._doc._id)
-      res.send(decoded._doc._id)
+      res.send(decoded.id)
     } else {
       console.log('masuk else');
     }
@@ -77,29 +77,6 @@ methods.fbLogin = function(req, res){
     }
   })
 }
-
-//INSERT FB SUKSES
-// methods.fbLogin = function(req, res){
-//   console.log(req.body.member_id);
-//   //PERTAMA LOGIN, ID LANGSUNG DIBUAT
-//   User.find({member_id:req.body.member_id},function(err, result) {
-//     let a = result.length
-//     if(a == 0){
-//       var userInput = new User({
-//         member_id:req.body.member_id
-//       })
-//       userInput.save(function(err,userInput){
-//         if(err){
-//           return console.log(err);
-//         } else {
-//           res.send(userInput)
-//         }
-//       })
-//     } else {
-//       console.log('belum');
-//     }
-//   })
-// }
 
 
 //login local

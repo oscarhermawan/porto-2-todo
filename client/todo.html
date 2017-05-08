@@ -180,6 +180,7 @@
       },
       methods:{
         getId:function(){
+          console.log(localStorage.getItem('token'));
           axios.get('http://localhost:3000/users/getid', {headers : {token:localStorage.getItem('token')}})
           .then((id)=>{
             app.member_id= id.data;

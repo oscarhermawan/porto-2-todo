@@ -20,11 +20,12 @@
           .then((result)=>{
             console.log(result);
             if(result == null){
-              console.log(result);
+              // console.log(result);
             }
             else {
               localStorage.setItem('token', result.data.token)
-              window.location.replace("todo.html")
+              console.log(localStorage.getItem('token'));
+              // window.location.replace("todo.html")
             }
           })
           .catch((err)=>{
