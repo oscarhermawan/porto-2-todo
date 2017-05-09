@@ -7,6 +7,7 @@
     <script src="https://unpkg.com/vue"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
+    <!--
     <script>
       // This is called with the results from from FB.getLoginStatus().
       function statusChangeCallback(response) {
@@ -96,7 +97,7 @@
         });
       }
     </script>
-
+    -->
   </head>
   <body>
     <div id="app">
@@ -122,12 +123,16 @@
         				</div>
 
 
-        				<button type="submit" class="btn btn-success" v-on:click="loginLocal">
+        				<button type="submit" class="btn btn-success" v-on:click.prevent="loginLocal">
         					Login
         				</button>
+
+
+                <!-- button login fb
                 <button type="submit" class="btn btn-primary">
                   <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
                   </fb:login-button>
+                -->
         				</button>
                 <hr>
                 Don't have an account! Sign Up <a href="/signup.html">Here<a>
@@ -155,14 +160,18 @@
       },
       methods:{
         loginLocal:function(){
-          axios.post('http://localhost:3000/users/signin',{username:this.username,password:this.password })
+          axios.post('http://localhost:3000/users/signin',{
+            username:this.username,
+            password:this.password
+          })
           .then((result)=>{
             if(result.data.token == null){
               console.log(result.data.message);
             }
             else {
+              console.log(result.data);
               localStorage.setItem('token', result.data.token)
-              window.location.replace("todo.html")
+              window.location.href = 'todo.html'
             }
           })
           .catch((err)=>{

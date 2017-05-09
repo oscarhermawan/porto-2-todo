@@ -81,6 +81,7 @@ methods.fbLogin = function(req, res){
 
 //login local
 methods.signIn = function (username, password, next) {
+  console.log(username, password);
   var getUser = User.findOne({username : username})
   getUser.exec(function(err, user){
     if(passwordHash.verify(password, user.password)){
