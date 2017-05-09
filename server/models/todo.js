@@ -15,6 +15,9 @@ var todoSchema = new Schema({
   updatedAt:{
     type:Date,
     default:Date.now
+  },
+  warnAt:{
+    type:Date
   }
 })
 
